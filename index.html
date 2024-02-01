@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Form Validation with Regular Expressions</title>
+        <style>
+            form{
+                display: flex;
+                font-weight: bold;
+              
+            }
+            input {
+                font-weight: bold;
+            }
+            label,button {
+                font-weight: bold;
+                margin:0 2rem 0;
+
+              
+            }
+        </style>
+    </head>
+    <body>
+        <!-- check this url is going 404 on live => https://www.seagate.com/support/JBOD-storage-systems -->
+        <h1>Form Validation using Regular Expressions</h1>
+        <form id="myForm" action="https://www.seagate.com/support">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required />
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required />
+
+            <button type="submit">Submit</button>
+        </form>
+        <script>
+            const form = document.getElementById("myForm");
+
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                const nameInput = document.getElementById("name");
+                const emailInput = document.getElementById("email");
+                const phoneInput = document.getElementById("phone");
+
+                const nameRegex = /^[a-zA-Z]+ [a-zA-Z]+$/;
+                const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{1,64}@[a-zA-Z0-9-]{1,255}\.[a-zA-Z]{2,6}$/;
+                const phoneRegex = /^[0-9]{10}$/;
+
+                const nameIsValid = nameRegex.test(nameInput.value);
+                const emailIsValid = emailRegex.test(emailInput.value);
+                const phoneIsValid = phoneRegex.test(phoneInput.value);
+
+                if (!nameIsValid) {
+                    alert("Please enter a valid name");
+                    nameInput.focus();
+                    return;
+                }
+
+                if (!emailIsValid) {
+                    alert("Please enter a valid email address");
+                    emailInput.focus();
+                    return;
+                }
+
+                if (!phoneIsValid) {
+                    alert("Please enter a valid phone number in the format ###-###-####");
+                    phoneInput.focus();
+                    return;
+                }
+
+                const actionValue = document.getElementById("myForm").action;
+                function actionExists(actionValue) {
+                    var http = new XMLHttpRequest();
+                    http.open("HEAD", actionValue, false);
+                    http.send();
+                    if (http.status != 404) {
+                        alert("url is valid");
+                        const formData = new FormData(form);
+                        for (const [key, value] of formData.entries()) {
+                            localStorage.setItem(key, value);
+                        }
+
+                        const name = localStorage.getItem("name");
+                        const email = localStorage.getItem("email");
+                        const phone = localStorage.getItem("phone");
+
+                        // Use the retrieved values as needed
+                        console.log("Name:", name);
+                        console.log("Email:", email);
+                        console.log("Phone:", phone);
+                    } else {
+                        alert("This is leading to 404 Please check with the help Desk team!");
+                    }
+                }
+                actionExists(actionValue);
+                alert("Form submitted successfully");
+            });
+        </script>
+    </body>
+</html>
