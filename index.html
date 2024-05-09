@@ -1,45 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Form Validation with Regular Expressions</title>
-        <style>
-            form{
-                display: flex;
-                font-weight: bold;
-              
-            }
-            input {
-                font-weight: bold;
-            }
-            label,button {
-                font-weight: bold;
-                margin:0 2rem 0;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Validation with Country Code</title>
+  <style>
+    form {
+      display: flex;
+      font-weight: bold;     
+    }
+    input {
+      font-weight: bold;
+    }
+    label, button {
+      font-weight: bold;
+      margin: 0 2rem 0;     
+    }
+  </style>
 
-              
-            }
-        </style>
-    </head>
-    <body>
-        <!-- check this url is going 404 on live => https://www.seagate.com/support/JBOD-storage-systems -->
-        <h1>Form Validation using Regular Expressions</h1>
-        <form id="myForm" action="https://www.seagate.com/support">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+</head>
+<body>
+  <h1>Form Validation using Regular Expressions</h1>
+  <form id="myForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required />
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required />
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required />
 
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" required />
+    <label for="phone">Phone Number:</label>
+    <input type="tel" id="phone" name="phone" required />
 
-            <button type="submit">Submit</button>
-        </form>
-        <script>
-            const form = document.getElementById("myForm");
+    <button type="submit">Submit</button>
+  </form>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+  <script>
+    const form = document.getElementById("myForm");
+    const phoneInput = document.getElementById("phone");
 
-            form.addEventListener("submit", (event) => {
+    var iti = window.intlTelInput(phoneInput, {
+      initialCountry: "auto",
+      geoIpLookup: function (callback) {
+        $.get('https://ipinfo.io', function() {}, "jsonp").always(function(resp) {
+          var countryCode = (resp && resp.country) ? resp.country : "";
+          callback(countryCode);
+        });
+      },
+      separateDialCode: true
+    });
+form.addEventListener("submit", (event) => {
                 event.preventDefault();
 
                 const nameInput = document.getElementById("name");
@@ -96,6 +107,7 @@
                         alert("This is leading to 404 Please check with the help Desk team!");
                     }
                 }
+                
                 actionExists(actionValue);
                 alert("Form submitted successfully");
             });
